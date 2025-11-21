@@ -2,13 +2,12 @@ import streamlit as st
 import random
 import pandas as pd
 from datetime import datetime
-from pathlib import Path
 
 st.set_page_config(page_title="MCQ Quiz", layout="wide")
 
-# -----------------------------------------
-# 50 Completely New MCQs (Final)
-# -----------------------------------------
+# -----------------------------------------------------
+# 50 Completely New MCQs
+# -----------------------------------------------------
 questions = [
     {"q": "Which gas is mainly responsible for the greenhouse effect?",
      "options": ["Carbon dioxide", "Nitrogen", "Oxygen", "Argon"], "answer": 0},
@@ -158,30 +157,70 @@ questions = [
      "options": ["Bone", "Cartilage", "Enamel", "Dentin"], "answer": 2}
 ]
 
-# -----------------------------------------
-# QUIZ LOGIC
-# -----------------------------------------
-st.title("📝 MCQ Quiz (50 Questions)")
-
+# -----------------------------------------------------
+# INITIAL SESSION STATE
+# -----------------------------------------------------
 if "index" not in st.session_state:
     st.session_state.index = 0
     st.session_state.score = 0
+    st.session_state.responses = []
     random.shuffle(questions)
 
+st.title("📝 MCQ Quiz (50 Questions)")
+
+# -----------------------------------------------------
+# QUIZ COMPLETED → SHOW RESULT
+# -----------------------------------------------------
+if st.session_state.index >= len(questions):
+    st.success("🎉 Quiz Completed!")
+
+    correct = st.session_state.score
+    wrong = len(questions) - correct
+    negative = wrong * 0.3
+    final_score = correct - negative
+
+    st.subheader("📊 Final Score (With -0.3 Negative Marking):")
+    st.write(f"✔ Correct: **{correct}**")
+    st.write(f"✘ Wrong: **{wrong}**")
+    st.write(f"➖ Negative Marks: **-{negative:.1f}**")
+    st.write(f"### ⭐ Final Score: **{final_score:.2f} / {len(questions)}**")
+
+    st.divider()
+    st.subheader("📘 Detailed Answer Sheet")
+
+    for i, r in enumerate(st.session_state.responses):
+        st.write(f"### Q{i+1}. {r['q']}")
+        st.write(f"- **Your Answer:** {r['user']}")
+        st.write(f"- **Correct Answer:** {r['correct']}")
+        st.write("✔ Correct" if r['user'] == r['correct'] else "✘ Wrong")
+        st.write("---")
+
+    st.stop()
+
+# -----------------------------------------------------
+# SHOW CURRENT QUESTION
+# -----------------------------------------------------
 q = questions[st.session_state.index]
 
 st.subheader(f"Question {st.session_state.index + 1} of {len(questions)}")
 st.write(q["q"])
 
-selected = st.radio("Select your answer:", q["options"])
+selected = st.radio("Choose your answer:", q["options"])
 
+# -----------------------------------------------------
+# SUBMIT BUTTON
+# -----------------------------------------------------
 if st.button("Submit"):
-    if q["options"].index(selected) == q["answer"]:
+    correct_option = q["options"][q["answer"]]
+
+    st.session_state.responses.append({
+        "q": q["q"],
+        "user": selected,
+        "correct": correct_option
+    })
+
+    if selected == correct_option:
         st.session_state.score += 1
 
     st.session_state.index += 1
-
-    if st.session_state.index == len(questions):
-        st.success(f"🎉 Quiz completed! Your final score: {st.session_state.score}/{len(questions)}")
-    else:
-        st.rerun()
+    st.rerun()
