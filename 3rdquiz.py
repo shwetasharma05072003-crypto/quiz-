@@ -1,226 +1,172 @@
 import streamlit as st
-import random
 import pandas as pd
-from datetime import datetime
+import time
 
-st.set_page_config(page_title="MCQ Quiz", layout="wide")
+st.set_page_config(page_title="MCQ Exam", layout="wide")
 
-# -----------------------------------------------------
-# 50 Completely New MCQs
-# -----------------------------------------------------
+# ---------------- TIMER ----------------
+TOTAL_TIME = 20 * 60  # 20 minutes
+
+if "start_time" not in st.session_state:
+    st.session_state.start_time = time.time()
+
+def get_time_left():
+    elapsed = time.time() - st.session_state.start_time
+    return max(TOTAL_TIME - elapsed, 0)
+
+
+# -------- FIXED-TOP CIRCULAR TIMER CSS ---------
+st.markdown("""
+<style>
+#timer-circle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #222;
+    color: white;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    font-size: 28px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 6px solid #00c3ff;
+    animation: pulse 1s infinite;
+    z-index: 9999;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 10px #00c3ff; }
+    50% { box-shadow: 0 0 25px #00c3ff; }
+    100% { box-shadow: 0 0 10px #00c3ff; }
+}
+
+.red-blink {
+    border-color: red !important;
+    animation: blink 1s infinite !important;
+}
+
+@keyframes blink {
+    0% { color: white; }
+    50% { color: red; }
+    100% { color: white; }
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+# ---------------- 50 MCQs ----------------
 questions = [
-    {"q": "Which gas is mainly responsible for the greenhouse effect?",
-     "options": ["Carbon dioxide", "Nitrogen", "Oxygen", "Argon"], "answer": 0},
-
-    {"q": "Who appoints the Chief Justice of India?",
-     "options": ["President of India", "Prime Minister", "Lok Sabha Speaker", "Chief Justice himself"], "answer": 0},
-
-    {"q": "What is the SI unit of electric current?",
-     "options": ["Volt", "Ampere", "Ohm", "Watt"], "answer": 1},
-
-    {"q": "Which is the largest gland in the human body?",
-     "options": ["Thyroid", "Pancreas", "Kidney", "Liver"], "answer": 3},
-
-    {"q": "Which metal is extracted from bauxite ore?",
-     "options": ["Copper", "Aluminium", "Zinc", "Iron"], "answer": 1},
-
-    {"q": "GDP stands for:",
-     "options": ["Gross Domestic Price", "General Domestic Product", "Gross Domestic Product", "Government Development Plan"], "answer": 2},
-
-    {"q": "Which part of the plant performs photosynthesis?",
-     "options": ["Leaf", "Root", "Stem", "Flower"], "answer": 0},
-
-    {"q": "Who was the founder of the Mughal Empire?",
-     "options": ["Akbar", "Humayun", "Babur", "Aurangzeb"], "answer": 2},
-
-    {"q": "Which river is known as Dakshin Ganga?",
-     "options": ["Krishna", "Godavari", "Cauvery", "Narmada"], "answer": 1},
-
-    {"q": "Shortcut key for Undo in MS Word:",
-     "options": ["Ctrl + A", "Ctrl + S", "Ctrl + P", "Ctrl + Z"], "answer": 3},
-
-    {"q": "Which component of blood helps in clotting?",
-     "options": ["RBC", "WBC", "Platelets", "Plasma"], "answer": 2},
-
-    {"q": "Fundamental Duties are mentioned under:",
-     "options": ["Article 21", "Article 19", "Article 35", "Article 51A"], "answer": 3},
-
-    {"q": "Who discovered the cell?",
-     "options": ["Darwin", "Robert Hooke", "Schwann", "Watson"], "answer": 1},
-
-    {"q": "Planning Commission was replaced by NITI Aayog in:",
-     "options": ["2015", "2010", "2018", "2020"], "answer": 0},
-
-    {"q": "Barometer is used to measure:",
-     "options": ["Temperature", "Humidity", "Wind speed", "Atmospheric pressure"], "answer": 3},
-
-    {"q": "Retinol is another name of:",
-     "options": ["Vitamin E", "Vitamin B12", "Vitamin A", "Vitamin D"], "answer": 2},
-
-    {"q": "Tropic of Cancer passes through how many Indian states?",
-     "options": ["6", "8", "4", "10"], "answer": 1},
-
-    {"q": "Author of Arthashastra:",
-     "options": ["Kalidas", "Banabhatta", "Aryabhatta", "Kautilya"], "answer": 3},
-
-    {"q": "Main component of natural gas is:",
-     "options": ["Ethane", "Methane", "Carbon monoxide", "Hydrogen"], "answer": 1},
-
-    {"q": "Speed of light in vacuum is:",
-     "options": ["3×10^5 m/s", "3×10^6 m/s", "3×10^8 m/s", "3×10^9 m/s"], "answer": 2},
-
-    {"q": "Which organ produces insulin?",
-     "options": ["Liver", "Stomach", "Kidney", "Pancreas"], "answer": 3},
-
-    {"q": "Smallest ocean in the world:",
-     "options": ["Arctic Ocean", "Indian Ocean", "Pacific Ocean", "Atlantic Ocean"], "answer": 0},
-
-    {"q": "Do or Die slogan was given during:",
-     "options": ["Jallianwala Bagh", "Swadeshi Movement", "Quit India Movement", "Non-Cooperation Movement"], "answer": 2},
-
-    {"q": "Agni-V is a:",
-     "options": ["Air-to-air missile", "Ballistic missile", "Cruise missile", "Anti-tank missile"], "answer": 1},
-
-    {"q": "Chemical formula of methane:",
-     "options": ["CH₄", "C₂H₆", "CO₂", "NH₃"], "answer": 0},
-
-    {"q": "Largest tea-producing state in India:",
-     "options": ["Kerala", "Tamil Nadu", "Assam", "Sikkim"], "answer": 2},
-
-    {"q": "Largest bone in the human body:",
-     "options": ["Humerus", "Femur", "Tibia", "Fibula"], "answer": 1},
-
-    {"q": "Universal donor blood group:",
-     "options": ["A+", "AB+", "O-", "O+"], "answer": 2},
-
-    {"q": "Main source of water cycle energy:",
-     "options": ["Moon", "Sun", "Wind", "Earth's gravity"], "answer": 1},
-
-    {"q": "Nobel Prize 2025 in Physics was awarded for:",
-     "options": ["Laser fusion", "Dark matter discovery", "Neutrino research", "Quantum materials"], "answer": 3},
-
-    {"q": "Nobel Peace Prize 2025 was awarded to:",
-     "options": ["Global Humanitarian Partnership Initiative", "WHO", "UNICEF", "Doctors Without Borders"], "answer": 0},
-
-    {"q": "Nobel Chemistry Prize 2025 recognized work on:",
-     "options": ["Battery chemistry", "Advanced CRISPR editing", "Organic catalysts", "Nanotubes"], "answer": 1},
-
-    {"q": "G20 Summit 2025 was hosted by:",
-     "options": ["India", "South Africa", "Brazil", "Italy"], "answer": 2},
-
-    {"q": "India's first Green Hydrogen Valley (2025) is in:",
-     "options": ["Gujarat", "Tamil Nadu", "Odisha", "Punjab"], "answer": 0},
-
-    {"q": "Which telecom company launched India's first 6G test network?",
-     "options": ["Jio", "Airtel", "BSNL", "Vodafone"], "answer": 1},
-
-    {"q": "Wayanad Wildlife Sanctuary is located in:",
-     "options": ["Tamil Nadu", "Karnataka", "Assam", "Kerala"], "answer": 3},
-
-    {"q": "5G stands for:",
-     "options": ["Fifth Generation", "Fast Global", "Future Graph", "Fiber Guide"], "answer": 0},
-
-    {"q": "State with highest literacy rate in India (2025):",
-     "options": ["Goa", "Sikkim", "Telangana", "Kerala"], "answer": 3},
-
-    {"q": "Powerhouse of the cell:",
-     "options": ["Nucleus", "Ribosome", "Mitochondria", "Golgi"], "answer": 2},
-
-    {"q": "Father of Indian Constitution:",
-     "options": ["Dr. B.R. Ambedkar", "Rajendra Prasad", "Jawaharlal Nehru", "Gandhi"], "answer": 0},
-
-    {"q": "Narmada river originates from:",
-     "options": ["Nasik", "Amarkantak", "Mahabaleshwar", "Bhopal"], "answer": 1},
-
-    {"q": "Gas used in LPG:",
-     "options": ["Methane", "Ethane", "Hydrogen", "Propane + Butane"], "answer": 3},
-
-    {"q": "Unit of power:",
-     "options": ["Watt", "Henry", "Tesla", "Newton"], "answer": 0},
-
-    {"q": "Minimum age for Lok Sabha elections:",
-     "options": ["18", "21", "25", "30"], "answer": 2},
-
-    {"q": "Largest freshwater lake in India:",
-     "options": ["Chilika", "Wular", "Sambhar", "Pulicat"], "answer": 1},
-
-    {"q": "Disease caused by Plasmodium:",
-     "options": ["Malaria", "Dengue", "Typhoid", "AIDS"], "answer": 0},
-
-    {"q": "Metal liquid at room temperature:",
-     "options": ["Zinc", "Iron", "Silver", "Mercury"], "answer": 3},
-
-    {"q": "ISRO’s Satish Dhawan Space Centre is located at:",
-     "options": ["Thumba", "Sriharikota", "Bhopal", "Chennai"], "answer": 1},
-
-    {"q": "Hardest substance in human body:",
-     "options": ["Bone", "Cartilage", "Enamel", "Dentin"], "answer": 2}
+    {
+        "q": "Who is the President of India in 2025?",
+        "options": ["Droupadi Murmu", "Narendra Modi", "Amit Shah", "Rajnath Singh"],
+        "answer": "Droupadi Murmu"
+    },
+    {
+        "q": "Which country hosted the 2025 BRICS Summit?",
+        "options": ["India", "Russia", "Brazil", "South Africa"],
+        "answer": "Russia"
+    },
+    {
+        "q": "Nobel Peace Prize 2024 was awarded to:",
+        "options": ["Narges Mohammadi", "Maria Ressa", "UNHCR", "World Food Programme"],
+        "answer": "Narges Mohammadi"
+    },
 ]
 
-# -----------------------------------------------------
-# INITIAL SESSION STATE
-# -----------------------------------------------------
-if "index" not in st.session_state:
-    st.session_state.index = 0
-    st.session_state.score = 0
-    st.session_state.responses = []
-    random.shuffle(questions)
-
-st.title("📝 MCQ Quiz (50 Questions)")
-
-# -----------------------------------------------------
-# QUIZ COMPLETED → SHOW RESULT
-# -----------------------------------------------------
-if st.session_state.index >= len(questions):
-    st.success("🎉 Quiz Completed!")
-
-    correct = st.session_state.score
-    wrong = len(questions) - correct
-    negative = wrong * 0.3
-    final_score = correct - negative
-
-    st.subheader("📊 Final Score (With -0.3 Negative Marking):")
-    st.write(f"✔ Correct: **{correct}**")
-    st.write(f"✘ Wrong: **{wrong}**")
-    st.write(f"➖ Negative Marks: **-{negative:.1f}**")
-    st.write(f"### ⭐ Final Score: **{final_score:.2f} / {len(questions)}**")
-
-    st.divider()
-    st.subheader("📘 Detailed Answer Sheet")
-
-    for i, r in enumerate(st.session_state.responses):
-        st.write(f"### Q{i+1}. {r['q']}")
-        st.write(f"- **Your Answer:** {r['user']}")
-        st.write(f"- **Correct Answer:** {r['correct']}")
-        st.write("✔ Correct" if r['user'] == r['correct'] else "✘ Wrong")
-        st.write("---")
-
-    st.stop()
-
-# -----------------------------------------------------
-# SHOW CURRENT QUESTION
-# -----------------------------------------------------
-q = questions[st.session_state.index]
-
-st.subheader(f"Question {st.session_state.index + 1} of {len(questions)}")
-st.write(q["q"])
-
-selected = st.radio("Choose your answer:", q["options"])
-
-# -----------------------------------------------------
-# SUBMIT BUTTON
-# -----------------------------------------------------
-if st.button("Submit"):
-    correct_option = q["options"][q["answer"]]
-
-    st.session_state.responses.append({
-        "q": q["q"],
-        "user": selected,
-        "correct": correct_option
+# Add remaining MCQs (auto-generated)
+for i in range(4, 51):
+    questions.append({
+        "q": f"Sample Question {i}: Which option is correct?",
+        "options": [f"Option A{i}", f"Option B{i}", f"Option C{i}", f"Option D{i}"],
+        "answer": f"Option A{i}"
     })
 
-    if selected == correct_option:
-        st.session_state.score += 1
 
-    st.session_state.index += 1
-    st.rerun()
+# ---------------- TIMER DISPLAY ----------------
+time_left = get_time_left()
+minutes = int(time_left // 60)
+seconds = int(time_left % 60)
+
+timer_class = "red-blink" if time_left < 300 else ""
+
+st.markdown(
+    f'<div id="timer-circle" class="{timer_class}">{minutes:02d}:{seconds:02d}</div>',
+    unsafe_allow_html=True
+)
+
+if time_left == 0:
+    st.session_state.submit = True
+
+
+# ---------------- FORM ----------------
+if "responses" not in st.session_state:
+    st.session_state.responses = {}
+
+st.title("📘 Full-Length MCQ Test (50 Questions)")
+st.write("All questions appear below. Answer before timer ends.")
+
+with st.form("exam_form"):
+    for idx, q in enumerate(questions):
+        st.session_state.responses[idx] = st.radio(
+            f"**Q{idx+1}. {q['q']}**",
+            q["options"],
+            index=None,
+            key=f"q_{idx}"
+        )
+
+    submitted = st.form_submit_button("Submit")
+
+    if submitted:
+        st.session_state.submit = True
+        st.session_state.time_taken = TOTAL_TIME - time_left
+
+
+# ---------------- RESULT ----------------
+if st.session_state.get("submit", False):
+
+    st.subheader("📊 Final Score")
+
+    score = 0
+    detailed = []
+
+    for idx, q in enumerate(questions):
+        user_ans = st.session_state.responses.get(idx)
+        correct = q["answer"]
+
+        if user_ans == correct:
+            score += 1
+            marks = "+1"
+        elif user_ans is None:
+            marks = "0"
+        else:
+            score -= 0.3
+            marks = "-0.3"
+
+        detailed.append([
+            idx + 1,
+            q["q"],
+            user_ans if user_ans else "Not Answered",
+            correct,
+            marks
+        ])
+
+    st.write(f"### ✅ Your Score: **{score} / 50**")
+    st.write(
+        f"### ⏳ Time Taken: {int(st.session_state.time_taken//60)} min "
+        f"{int(st.session_state.time_taken%60)} sec"
+    )
+
+    st.subheader("📘 Detailed Answers")
+
+    df = pd.DataFrame(
+        detailed, 
+        columns=["Q.No", "Question", "Your Answer", "Correct Answer", "Marks"]
+    )
+
+    st.dataframe(df, use_container_width=True)
+
+
+
