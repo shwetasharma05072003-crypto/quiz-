@@ -128,12 +128,15 @@ if not st.session_state.submitted:
 if not st.session_state.submitted:
  st.write("Answer all questions below. Select 'Not Attempted' if skipping.")
 for i, q in enumerate(QUESTIONS):
-    choice = st.radio(
+    # Include a blank option at the top
+    options_with_blank = [""] + q["options"]
+    choice = st.selectbox(
         f"Q{i+1}. {q['q']}",
-        q["options"],
+        options_with_blank,
         key=f"q_{i}"
     )
-    st.session_state.responses[i] = choice
+    # If user hasn't selected anything, treat as 'Not Attempted'
+    st.session_state.responses[i] = choice if choice else "Not Attempted"
 if st.button("Submit Now"):
     st.session_state.submitted = True
     st.session_state.auto_submitted = False
