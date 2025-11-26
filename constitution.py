@@ -71,7 +71,7 @@ questions = [
      "options": ["CJI", "CAG", "Attorney General", "Advocate General"], "answer": 2},
 
     {"q": "Article 110 defines:",
-     "options": ["Money Bill", "Finance Bill", "Budget", "Tax'], "answer": 0},
+     "options": ["Money Bill", "Finance Bill", "Budget", "Tax"], "answer": 0},
 
     {"q": "Article 112 deals with:",
      "options": ["Budget", "Money Bill", "Finance Commission", "UPSC"], "answer": 0},
