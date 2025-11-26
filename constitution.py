@@ -170,4 +170,3 @@ for i, q in enumerate(QUESTIONS):
 
 st.success(f"✅ Total Score: {total_score:.2f} / {NUM_Q}")
 st.info(f"Correct: {correct} | Wrong: {wrong} | Not Attempted: {not_attempted}")
-```
