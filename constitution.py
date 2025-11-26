@@ -142,35 +142,33 @@ if st.button("Submit Now"):
     st.session_state.auto_submitted = False
     st.stop()
 # -----------------------
-
 # RESULTS
-
 # -----------------------
-
 if st.session_state.submitted:
     st.header("Result Summary")
     total_score = 0.0
     correct = wrong = not_attempted = 0
-for i, q in enumerate(QUESTIONS):
-    user_ans = st.session_state.responses.get(i, "Not Attempted")
-    correct_ans = q["correct_text"]
-    if user_ans == "Not Attempted" or user_ans is None:
-        mark = 0.0
-        not_attempted += 1
-        outcome = "Not Attempted"
-    elif user_ans == correct_ans:
-        mark = POSITIVE_MARK
-        total_score += mark
-        correct += 1
-        outcome = "Correct"
-    else:
-        mark = -NEGATIVE_MARK
-        total_score += mark
-        wrong += 1
-        outcome = "Wrong"
-    st.write(f"Q{i+1}. {q['q']}")
-    st.write(f"Your Answer: {user_ans}  |  Correct Answer: {correct_ans}  |  {outcome}")
-    st.write("---")
 
-st.success(f"✅ Total Score: {total_score:.2f} / {NUM_Q}")
-st.info(f"Correct: {correct} | Wrong: {wrong} | Not Attempted: {not_attempted}")
+    for i, q in enumerate(QUESTIONS):
+        user_ans = st.session_state.responses.get(i, "Not Attempted")
+        correct_ans = q["correct_text"]
+        if user_ans == "Not Attempted" or user_ans is None:
+            mark = 0.0
+            not_attempted += 1
+            outcome = "Not Attempted"
+        elif user_ans == correct_ans:
+            mark = POSITIVE_MARK
+            total_score += mark
+            correct += 1
+            outcome = "Correct"
+        else:
+            mark = -NEGATIVE_MARK  # fixed here
+            total_score += mark
+            wrong += 1
+            outcome = "Wrong"
+
+        st.write(f"Q{i+1}. {q['q']}")
+        st.write(f"Your answer: {user_ans} | Correct answer: {correct_ans} | {outcome} | Marks: {mark}")
+
+    st.markdown(f"**Total Score:** {total_score}")
+    st.markdown(f"✅ Correct: {correct} | ❌ Wrong: {wrong} | ⚪ Not Attempted: {not_attempted}")
