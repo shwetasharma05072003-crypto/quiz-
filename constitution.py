@@ -136,10 +136,11 @@ if not st.session_state.submitted:
         st.session_state.responses[i] = choice
 
     # Submit button
-    if st.button("Submit Now", type="primary"):
-        st.session_state.submitted = True
-        st.session_state.auto_submitted = False
-        st.experimental_rerun()  # reload to show results
+if st.button("Submit Now", type="primary"):
+    st.session_state.submitted = True
+    st.session_state.auto_submitted = False
+    st.stop()  # Stop execution and refresh to show results
+
 # -----------------------
 # RESULTS
 # -----------------------
