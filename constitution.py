@@ -126,7 +126,7 @@ if not st.session_state.submitted:
 # -----------------------
 
 if not st.session_state.submitted:
-st.write("Answer all questions below. Select 'Not Attempted' if skipping.")
+ st.write("Answer all questions below. Select 'Not Attempted' if skipping.")
 for i, q in enumerate(QUESTIONS):
 default = st.session_state.responses.get(i, None)
 choice = st.radio(f"Q{i+1}. {q['q']}", q["options"], index=q["options"].index(default) if default in q["options"] else 0, key=f"q_{i}")
