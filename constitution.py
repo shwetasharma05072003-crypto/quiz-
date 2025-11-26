@@ -144,9 +144,9 @@ if st.button("Submit Now"):
 # -----------------------
 
 if st.session_state.submitted:
-st.header("Result Summary")
-total_score = 0.0
-correct = wrong = not_attempted = 0
+    st.header("Result Summary")
+    total_score = 0.0
+    correct = wrong = not_attempted = 0
 for i, q in enumerate(QUESTIONS):
     user_ans = st.session_state.responses.get(i, "Not Attempted")
     correct_ans = q["correct_text"]
