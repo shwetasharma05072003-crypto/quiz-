@@ -75,8 +75,6 @@ RAW_QUESTIONS = [
 {"q": "Who won the 2025 Nobel Prize in Chemistry?", "options": ["a) John Clarke, Michel H. Devoret & John M. Martinis","b) Mary E. Brunkow, Fred Ramsdell & Shimon Sakaguchi","c) Susumu Kitagawa, Richard Robson & Omar M. Yaghi","d) Joel Mokyr, Philippe Aghion & Peter Howitt"], "ans": "c) Susumu Kitagawa, Richard Robson & Omar M. Yaghi"},
 {"q": "Who won the 2025 Nobel Prize in Physiology or Medicine?", "options": ["a) John Clarke, Michel H. Devoret & John M. Martinis","b) Susumu Kitagawa, Richard Robson & Omar M. Yaghi","c) Mary E. Brunkow, Fred Ramsdell & Shimon Sakaguchi","d) László Krasznahorkai"], "ans": "c) Mary E. Brunkow, Fred Ramsdell & Shimon Sakaguchi"},
 {"q": "Who won the 2025 Nobel Peace Prize?", "options": ["a) A scientific team","b) A novelist","c) María Corina Machado","d) An economist"], "ans": "c) María Corina Machado"}
-```
-
 ]
 
 # -----------------------
@@ -96,7 +94,7 @@ random.shuffle(shuffled)
 return shuffled
 
 if st.session_state.shuffled_questions is None:
-st.session_state.shuffled_questions = build_shuffled()
+ st.session_state.shuffled_questions = build_shuffled()
 
 QUESTIONS = st.session_state.shuffled_questions
 NUM_Q = len(QUESTIONS)
@@ -111,12 +109,12 @@ elapsed = (datetime.now() - st.session_state.start_time).total_seconds()
 remaining = int(max(0, TOTAL_TIME_SECONDS - elapsed))
 
 if remaining == 0 and not st.session_state.submitted:
-st.session_state.submitted = True
-st.session_state.auto_submitted = True
+ st.session_state.submitted = True
+ st.session_state.auto_submitted = True
 
 if not st.session_state.submitted:
 mins, secs = divmod(remaining, 60)
-st.markdown(f"⏰ **Time Left:** {mins:02d}:{secs:02d}")
+ st.markdown(f"⏰ **Time Left:** {mins:02d}:{secs:02d}")
 
 # -----------------------
 
@@ -130,14 +128,10 @@ for i, q in enumerate(QUESTIONS):
 default = st.session_state.responses.get(i, None)
 choice = st.radio(f"Q{i+1}. {q['q']}", q["options"], index=q["options"].index(default) if default in q["options"] else 0, key=f"q_{i}")
 st.session_state.responses[i] = choice
-
-```
 if st.button("Submit Now"):
     st.session_state.submitted = True
     st.session_state.auto_submitted = False
     st.stop()
-```
-
 # -----------------------
 
 # RESULTS
@@ -148,8 +142,6 @@ if st.session_state.submitted:
 st.header("Result Summary")
 total_score = 0.0
 correct = wrong = not_attempted = 0
-
-```
 for i, q in enumerate(QUESTIONS):
     user_ans = st.session_state.responses.get(i, "Not Attempted")
     correct_ans = q["correct_text"]
