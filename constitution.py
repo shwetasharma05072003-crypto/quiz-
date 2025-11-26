@@ -57,8 +57,6 @@ RAW_QUESTIONS = [
 {"q": "Article 280 deals with:", "options": ["A. Finance Commission", "B. CAG", "C. UPSC", "D. NITI Aayog"], "ans": "A. Finance Commission"},
 {"q": "Article 300A guarantees:", "options": ["A. Right to Equality", "B. Right to Property (legal right)", "C. Right to Education", "D. Right to Worship"], "ans": "B. Right to Property (legal right)"},
 {"q": "Constitution Amendment Procedure is described in:", "options": ["A. Article 352", "B. Article 356", "C. Article 360", "D. Article 368"], "ans": "D. Article 368"},
-
-```
 # Dams 10
 {"q": "Bhakra Nangal Dam is built on which river?", "options": ["a) Yamuna", "b) Sutlej", "c) Ganga", "d) Godavari"], "ans": "b) Sutlej"},
 {"q": "Hirakud Dam is located in which state?", "options": ["a) Maharashtra", "b) Odisha", "c) Chhattisgarh", "d) Jharkhand"], "ans": "b) Odisha"},
