@@ -84,12 +84,12 @@ RAW_QUESTIONS = [
 # -----------------------
 
 def build_shuffled():
-shuffled = []
-for item in RAW_QUESTIONS:
-opts = item["options"].copy()
-opts_with_skip = opts + ["Not Attempted"]
-random.shuffle(opts_with_skip)
-shuffled.append({"q": item["q"], "options": opts_with_skip, "correct_text": item["ans"]})
+ shuffled = []
+  for item in RAW_QUESTIONS:
+    opts = item["options"].copy()
+    opts_with_skip = opts + ["Not Attempted"]
+    random.shuffle(opts_with_skip)
+    shuffled.append({"q": item["q"], "options": opts_with_skip, "correct_text": item["ans"]})
 random.shuffle(shuffled)
 return shuffled
 
