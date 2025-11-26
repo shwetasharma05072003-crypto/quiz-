@@ -137,10 +137,10 @@ for i, q in enumerate(QUESTIONS):
     )
     # If user hasn't selected anything, treat as 'Not Attempted'
     st.session_state.responses[i] = choice if choice else "Not Attempted"
-if st.button("Submit Now"):
-    st.session_state.submitted = True
-    st.session_state.auto_submitted = False
-    st.stop()
+ if st.button("Submit Now", type="primary"):
+        st.session_state.submitted = True
+        st.session_state.auto_submitted = False
+        st.experimental_rerun()
 # -----------------------
 # RESULTS
 # -----------------------
