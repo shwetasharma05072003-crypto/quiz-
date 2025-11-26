@@ -141,9 +141,8 @@ if st.button("Submit Now", type="primary"):
     st.session_state.auto_submitted = False
     st.stop()  # Stop execution and refresh to show results
 
-# -----------------------
-# RESULTS
-# -----------------------
+NEGATIVE_MARK = 0.3  # fixed negative marking
+
 if st.session_state.submitted:
     st.header("Result Summary")
     total_score = 0.0
@@ -152,6 +151,7 @@ if st.session_state.submitted:
     for i, q in enumerate(QUESTIONS):
         user_ans = st.session_state.responses.get(i, "Not Attempted")
         correct_ans = q["correct_text"]
+
         if user_ans == "Not Attempted" or user_ans is None:
             mark = 0.0
             not_attempted += 1
@@ -162,13 +162,13 @@ if st.session_state.submitted:
             correct += 1
             outcome = "Correct"
         else:
-            mark = -NEGATIVE_MARK  # fixed here
+            mark = -NEGATIVE_MARK
             total_score += mark
             wrong += 1
-            outcome = "Wrong"
+            outcome = f"Wrong (−{NEGATIVE_MARK})"
 
         st.write(f"Q{i+1}. {q['q']}")
-        st.write(f"Your answer: {user_ans} | Correct answer: {correct_ans} | {outcome} | Marks: {mark}")
+        st.write(f"Your Answer: {user_ans} | Correct Answer: {correct_ans} | Result: {outcome}\n")
 
-    st.markdown(f"**Total Score:** {total_score}")
-    st.markdown(f"✅ Correct: {correct} | ❌ Wrong: {wrong} | ⚪ Not Attempted: {not_attempted}")
+    st.markdown(f"**Total Score: {total_score} / {NUM_Q}**")
+    st.markdown(f"✅ Correct: {correct} | ❌ Wrong: {wrong} | ⏸️ Not Attempted: {not_attempted}")
