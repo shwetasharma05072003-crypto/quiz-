@@ -115,8 +115,9 @@ if remaining == 0 and not st.session_state.submitted:
  st.session_state.auto_submitted = True
 
 if not st.session_state.submitted:
-mins, secs = divmod(remaining, 60)
- st.markdown(f"⏰ **Time Left:** {mins:02d}:{secs:02d}")
+    mins, secs = divmod(remaining, 60)
+    st.markdown(f"⏰ **Time Left:** {mins:02d}:{secs:02d}")
+
 
 # -----------------------
 
