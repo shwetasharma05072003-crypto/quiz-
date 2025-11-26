@@ -9,15 +9,15 @@ NEGATIVE_MARK = 0.3
 POSITIVE_MARK = 1.0
 
 if "start_time" not in st.session_state:
-st.session_state.start_time = datetime.now()
+ st.session_state.start_time = datetime.now()
 if "submitted" not in st.session_state:
-st.session_state.submitted = False
+ st.session_state.submitted = False
 if "auto_submitted" not in st.session_state:
-st.session_state.auto_submitted = False
+ st.session_state.auto_submitted = False
 if "shuffled_questions" not in st.session_state:
-st.session_state.shuffled_questions = None
+ st.session_state.shuffled_questions = None
 if "responses" not in st.session_state:
-st.session_state.responses = {}
+ st.session_state.responses = {}
 
 # -----------------------
 
