@@ -8,16 +8,23 @@ TOTAL_TIME_SECONDS = 50 * 60  # 50 minutes
 NEGATIVE_MARK = 0.3
 POSITIVE_MARK = 1.0
 
+# -----------------------
+# SESSION STATE INIT
+# -----------------------
 if "start_time" not in st.session_state:
- st.session_state.start_time = datetime.now()
+    st.session_state.start_time = datetime.now()
 if "submitted" not in st.session_state:
- st.session_state.submitted = False
+    st.session_state.submitted = False
 if "auto_submitted" not in st.session_state:
- st.session_state.auto_submitted = False
+    st.session_state.auto_submitted = False
 if "shuffled_questions" not in st.session_state:
- st.session_state.shuffled_questions = None
+    st.session_state.shuffled_questions = None
 if "responses" not in st.session_state:
- st.session_state.responses = {}
+    st.session_state.responses = {}
+
+# -----------------------
+# QUESTIONS DATA
+# -----------------------
 census_questions = [
     {"question": "When was the first synchronous Census conducted in India?",
      "options": ["1871", "1881", "1901", "1921"], "answer": "1881"},
@@ -110,7 +117,7 @@ census_questions = [
      "options": ["Nagaland", "Mizoram", "Kerala", "Goa"], "answer": "Mizoram"},
 
     {"question": "Which state has lowest child sex ratio?",
-     "options": ["Punjab", "Haryana", "Gujarat", "Rajasthan"], "answer": "Haryana"}
+     "options": ["Punjab", "Haryana", "Gujarat", "Rajasthan"], "answer": "Haryana"},
 ]
 
 # -----------------------
@@ -122,63 +129,60 @@ def build_shuffled():
         opts = item["options"].copy()
         opts_with_skip = opts + ["Not Attempted"]
         random.shuffle(opts_with_skip)
+
         shuffled.append({
-            "q": item["q"],
+            "q": item["question"],
             "options": opts_with_skip,
-            "correct_text": item["ans"]
+            "correct_text": item["answer"]
         })
+
     random.shuffle(shuffled)
     return shuffled
 
 
 if st.session_state.shuffled_questions is None:
- st.session_state.shuffled_questions = build_shuffled()
+    st.session_state.shuffled_questions = build_shuffled()
 
 QUESTIONS = st.session_state.shuffled_questions
 NUM_Q = len(QUESTIONS)
 
 # -----------------------
-
 # TIMER
-
 # -----------------------
-
 elapsed = (datetime.now() - st.session_state.start_time).total_seconds()
 remaining = int(max(0, TOTAL_TIME_SECONDS - elapsed))
 
 if remaining == 0 and not st.session_state.submitted:
- st.session_state.submitted = True
- st.session_state.auto_submitted = True
+    st.session_state.submitted = True
+    st.session_state.auto_submitted = True
 
 if not st.session_state.submitted:
     mins, secs = divmod(remaining, 60)
     st.markdown(f"⏰ **Time Left:** {mins:02d}:{secs:02d}")
-
 
 # -----------------------
 # QUIZ
 # -----------------------
 if not st.session_state.submitted:
     st.write("Answer all questions below. Select 'Not Attempted' if skipping.")
-    
+
     for i, q in enumerate(QUESTIONS):
-        # Show radio with 'Not Attempted' selected by default
         choice = st.radio(
-            f"Q{i+1}. {q['q']}", 
-            q["options"], 
-            index=len(q["options"]) - 1,  # 'Not Attempted' is last
+            f"Q{i+1}. {q['q']}",
+            q["options"],
+            index=len(q["options"]) - 1,
             key=f"q_{i}"
         )
         st.session_state.responses[i] = choice
 
-    # Submit button
-if st.button("Submit Now", type="primary"):
-    st.session_state.submitted = True
-    st.session_state.auto_submitted = False
-    st.stop()  # Stop execution and refresh to show results
+    if st.button("Submit Now", type="primary"):
+        st.session_state.submitted = True
+        st.session_state.auto_submitted = False
+        st.stop()
 
-NEGATIVE_MARK = 0.3  # fixed negative marking
-
+# -----------------------
+# RESULT SUMMARY
+# -----------------------
 if st.session_state.submitted:
     st.header("Result Summary")
     total_score = 0.0
@@ -192,11 +196,13 @@ if st.session_state.submitted:
             mark = 0.0
             not_attempted += 1
             outcome = "Not Attempted"
+
         elif user_ans == correct_ans:
             mark = POSITIVE_MARK
             total_score += mark
             correct += 1
             outcome = "Correct"
+
         else:
             mark = -NEGATIVE_MARK
             total_score += mark
@@ -206,5 +212,5 @@ if st.session_state.submitted:
         st.write(f"Q{i+1}. {q['q']}")
         st.write(f"Your Answer: {user_ans} | Correct Answer: {correct_ans} | Result: {outcome}\n")
 
-    st.markdown(f"**Total Score: {total_score} / {NUM_Q}**")
+    st.markdown(f"### **Total Score: {total_score} / {NUM_Q}**")
     st.markdown(f"✅ Correct: {correct} | ❌ Wrong: {wrong} | ⏸️ Not Attempted: {not_attempted}")
