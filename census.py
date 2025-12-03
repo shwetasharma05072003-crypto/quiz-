@@ -118,7 +118,7 @@ census_questions = [
 # -----------------------
 def build_shuffled():
     shuffled = []
-    for item in RAW_QUESTIONS:
+    for item in census_questions:
         opts = item["options"].copy()
         opts_with_skip = opts + ["Not Attempted"]
         random.shuffle(opts_with_skip)
