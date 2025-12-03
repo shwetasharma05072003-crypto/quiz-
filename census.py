@@ -18,13 +18,6 @@ if "shuffled_questions" not in st.session_state:
  st.session_state.shuffled_questions = None
 if "responses" not in st.session_state:
  st.session_state.responses = {}
-
-# -----------------------
-
-# RAW QUESTIONS (45)
-
-# -----------------------
-
 census_questions = [
     {"question": "When was the first synchronous Census conducted in India?",
      "options": ["1871", "1881", "1901", "1921"], "answer": "1881"},
